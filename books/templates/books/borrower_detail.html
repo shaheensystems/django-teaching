@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Borrower: {{ object.name }}</h1>
+<p>Total books borrowed: {{ loan_count }}</p>
+<h2>Books Borrowed</h2>
+<ul>
+{% for loan in loaned_books %}
+    <li>{{ loan.book.title }} by {{ loan.book.author.name }}</li>
+{% endfor %}
+</ul> 
+{% endblock %}

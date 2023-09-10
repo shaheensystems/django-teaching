@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Borrowers Who've Borrowed from Multiple Authors</h1>
+<ul>
+    {% for borrower in object_list %}
+        <li>
+            {{ borrower.name }} - Borrowed from {{ borrower.num_authors }} different authors
+        </li>
+    {% endfor %}
+</ul>
+{% endblock %}

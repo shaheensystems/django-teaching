@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% if object %}
+    <h1>{{ book.title }}</h1>
+    {% if book.cover_image %}
+    <img src="{{ book.cover_image.url }}" alt="{{ book.title }} cover">
+{% else %}
+    <p>No cover image available</p>
+{% endif %}
+{% endif %}
+
+{% endblock %}

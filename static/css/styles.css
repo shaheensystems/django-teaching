@@ -1,0 +1,19 @@
+/* Background color for the body */
+body {
+    background-color: #f3f4f6;
+  }
+  
+  /* Navbar background color */
+  .navbar {
+    background-color: #114a86;
+  }
+  
+  /* Footer background and text color */
+  footer {
+    background-color: #5e6266;
+    color: white;
+  }
+  img
+  {
+    max-width: 100%;
+  }

@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Popular Authors</h1>
+<ul>
+{% for author in object_list %}
+    <li>{{ author.name }} - Number of Books: {{ author.num_books }}</li>
+{% endfor %}
+</ul>
+{% endblock %}

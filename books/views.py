@@ -4,7 +4,13 @@ from django.shortcuts import render
 from .models import Book, Author, Borrower, Loan
 from django.db.models import Count
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-
+from rest_framework import generics
+from .serializers import AuthorSerializer, BookSerializer, BorrowerSerializer, LoanSerializer
+from django.http import JsonResponse, Http404
+from rest_framework.parsers import JSONParser
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework.request import Request
 class BookListView(generic.ListView):
     model = Book
     template_name = 'books/book_list.html'
@@ -88,3 +94,57 @@ class MultiAuthorBorrowersView(generic.ListView):
         return Borrower.objects.annotate(
             num_authors=Count('loan__book__author', distinct=True)
         ).filter(num_authors__gt=1)
+class AuthorList(generics.ListCreateAPIView):
+    queryset = Author.objects.all()
+    serializer_class = AuthorSerializer
+
+class AuthorDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Author.objects.all()
+    serializer_class = AuthorSerializer
+
+@api_view(['GET', 'POST'])
+def book_list(request:Request):
+    if request.method == 'GET':
+        books = Book.objects.all()
+        serializer = BookSerializer(books, many=True)
+        return Response(serializer.data)
+    
+    elif request.method == 'POST':
+        data = JSONParser().parse(request)
+        serializer = BookSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=201)
+        return Response(serializer.errors, status=400)
+
+@api_view(['GET', 'PUT', 'DELETE'])
+def book_detail(request:Request, pk):
+    try:
+        book = Book.objects.get(pk=pk)
+    except Book.DoesNotExist:
+        return Http404
+    
+    if request.method == 'GET':
+        serializer = BookSerializer(book)
+        return Response(serializer.data)
+
+    elif request.method == 'PUT':
+        data = JSONParser().parse(request)
+        serializer = BookSerializer(book, data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=400)
+
+    elif request.method == 'DELETE':
+        book.delete()
+        return Response(status=204)
+@api_view()
+def book_list2(request):
+    return Response('ok')
+from .serializers import BookSerializer
+@api_view(['GET', 'PUT', 'DELETE'])
+def api_book_details(request:Request, pk):
+    book=Book.objects.get(pk=pk)
+    serializer=BookSerializer(book)
+    return Response(serializer.data)

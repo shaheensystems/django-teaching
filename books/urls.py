@@ -17,4 +17,8 @@ urlpatterns = [
     path('api/authors/<int:pk>/', views.AuthorDetail.as_view(), name='author-detail'),
     path('api/books/', views.book_list, name='book-list'),
     path('api/books/<int:pk>/', views.api_book_details, name='book-detail'),
+    #edit urls
+    path('author/add/', views.AuthorCreateView.as_view(), name='author_add'),
+    path('author/<int:pk>/edit/', views.AuthorUpdateView.as_view(), name='author_edit'),
+    path('author/<int:pk>/delete/', views.AuthorDeleteView.as_view(), name='author_delete'),
 ]

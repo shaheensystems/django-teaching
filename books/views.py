@@ -1,10 +1,14 @@
 from typing import Optional
+from django.urls import reverse_lazy
 from django.views import generic
 from django.shortcuts import render
+
+from books.forms import AuthorForm
 from .models import Book, Author, Borrower, Loan
 from django.db.models import Count
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from rest_framework import generics
+from django.views.generic.edit import DeleteView, CreateView, UpdateView
 from .serializers import AuthorSerializer, BookSerializer, BorrowerSerializer, LoanSerializer
 from django.http import JsonResponse, Http404
 from rest_framework.parsers import JSONParser
@@ -40,7 +44,7 @@ class AuthorsWithBooksView(generic.ListView):
 
     def get_queryset(self):
         return Author.objects.annotate(book_count=Count('book')).filter(book_count__gte=1)
-# ... Existing imports and views ...
+
 
 class AuthorDetailView(generic.DetailView):
     model = Author
@@ -148,3 +152,26 @@ def api_book_details(request:Request, pk):
     book=Book.objects.get(pk=pk)
     serializer=BookSerializer(book)
     return Response(serializer.data)
+#edit, update and delete views for author
+class AuthorCreateView(CreateView):
+    form_class = AuthorForm
+    template_name = 'books/author_form.html'
+
+    def get_success_url(self):
+        return reverse_lazy('author_detail', kwargs={'pk': self.object.pk})
+
+
+
+class AuthorUpdateView(UpdateView):
+    model = Author
+    form_class = AuthorForm
+    template_name = 'books/author_form.html'
+
+    def get_success_url(self):
+        return reverse_lazy('author_detail', kwargs={'pk': self.object.pk})
+
+class AuthorDeleteView(DeleteView):
+    model = Author
+    context_object_name = 'author'
+    template_name = 'books/author_confirm_delete.html'
+    success_url = reverse_lazy('author_list')
